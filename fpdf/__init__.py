@@ -10,6 +10,7 @@ from .fpdf import (
 )
 from .html import HTMLMixin
 from .template import Template
+from . import svg
 from .deprecation import WarnOnDeprecatedModuleAttributes
 
 FPDF_VERSION = _FPDF_VERSION
@@ -24,6 +25,7 @@ FPDF_VERSION = _FPDF_VERSION
 
 FPDF_FONT_DIR = _FPDF_FONT_DIR
 """This is the location of where to look for fonts."""
+
 
 sys.modules[__name__].__class__ = WarnOnDeprecatedModuleAttributes
 
