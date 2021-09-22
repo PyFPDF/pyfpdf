@@ -25,6 +25,7 @@ import re
 import sys
 import warnings
 import zlib
+import PyPDF2 as p
 from collections import defaultdict
 from collections.abc import Sequence
 from contextlib import contextmanager
@@ -2384,6 +2385,28 @@ class FPDF:
         """
         self.set_y(y)
         self.set_x(x)
+
+    # def encryption(self):
+    #     output = p.PdfFileWriter()
+    #
+    #     # For Input
+    #
+    #     input_pdf = input("Enter your file name: ")
+    #     input_save = p.PdfFileReader(open(input_pdf + ".pdf", "rb"))
+    #
+    #     for i in range(0, input_save.getNumPages()):
+    #         output.addPage(input_save.getPage(i))
+    #
+    #     # For Output
+    #
+    #     name = input("Enter name of encrypted file you want: ")
+    #     output_save = open(name + ".pdf", "wb")
+    #
+    #     # Encryption
+    #
+    #     password = input("Enter password for the file: ")
+    #     output.encrypt(password, use_128bit=True)
+    #     output.write(output_save)
 
     def output(self, name="", dest=""):
         """
