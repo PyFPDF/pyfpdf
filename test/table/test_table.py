@@ -7,6 +7,7 @@ from fpdf import FPDF, FPDFException
 from fpdf.drawing import DeviceRGB
 from fpdf.fonts import FontFace
 from test.conftest import assert_pdf_equal, LOREM_IPSUM
+from fpdf.table import TableBordersLayout, TableBorderStyle, TableCellStyle
 
 
 HERE = Path(__file__).resolve().parent
@@ -327,6 +328,43 @@ def test_table_with_single_top_line_layout_and_page_break(tmp_path):  # PR #912
     assert_pdf_equal(
         pdf, HERE / "table_with_single_top_line_layout_and_page_break.pdf", tmp_path
     )
+
+
+def test_table_with_custom_border_layout(tmp_path):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font(family="helvetica", size=11)
+    # generate a custom layout with most of the available features: changes in thickness, color,
+    # and dash
+    custom_layout = TableBordersLayout(
+        cell_style_getter=(
+            lambda row_num, col_num, num_heading_rows, num_rows, num_cols: TableCellStyle(
+                left=(
+                    TableBorderStyle(thickness=2)
+                    if col_num == 0
+                    else TableBorderStyle(thickness=1.0, color=(0, 255, 125))
+                ),
+                bottom=TableBorderStyle(thickness=2)
+                if row_num == num_rows - 1
+                else False,
+                right=TableBorderStyle(thickness=2)
+                if col_num == num_cols - 1
+                else False,
+                top=(
+                    TableBorderStyle(thickness=2)
+                    if row_num in (0, num_heading_rows)
+                    else True
+                    if (row_num - num_heading_rows) % 2 == 0
+                    else TableBorderStyle(color=(255, 0, 0), dash=2)
+                ),
+            )
+        )
+    )
+
+    with pdf.table(rows=TABLE_DATA, borders_layout=custom_layout):
+        pass
+
+    assert_pdf_equal(pdf, HERE / "table_with_custom_layout.pdf", tmp_path)
 
 
 def test_table_align(tmp_path):
