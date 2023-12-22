@@ -775,6 +775,7 @@ test_svg_sources = (
         svgfile("use-image-def.svg"),
         id="Use xlink:href to insert an <image> from <defs>",
     ),
+    pytest.param(svgfile("text-samples.svg"), id="<text> tests"),
 )
 
 svg_path_edge_cases = (
