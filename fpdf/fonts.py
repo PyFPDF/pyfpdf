@@ -35,6 +35,7 @@ from .deprecation import get_stack_level
 from .drawing import convert_to_device_color, DeviceGray, DeviceRGB
 from .enums import FontDescriptorFlags, TextEmphasis, Align
 from .syntax import Name, PDFObject
+from .font_type_3 import get_color_font_object
 from .util import escape_parens
 
 
@@ -238,7 +239,7 @@ class TTFFont:
         "name",
         "desc",
         "glyph_ids",
-        "hbfont",
+        "_hbfont",
         "sp",
         "ss",
         "up",

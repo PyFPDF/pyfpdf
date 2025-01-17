@@ -688,7 +688,7 @@ class SVGObject:
         if viewbox is None:
             self.viewbox = None
         else:
-            viewbox.strip()
+            viewbox = viewbox.strip()
             vx, vy, vw, vh = [float(num) for num in NUMBER_SPLIT.split(viewbox)]
             if (vw < 0) or (vh < 0):
                 raise ValueError(f"invalid negative width/height in viewbox {viewbox}")

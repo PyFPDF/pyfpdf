@@ -1416,7 +1416,7 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
         with self.glyph_drawing_context() as ctxt:
             ctxt.add_item(path)
 
-            starting_style = self._current_graphic_style()
+            starting_style = GraphicsStyle()
             render_args = (
                 self._drawing_graphics_state_registry,
                 Point(0, 0),

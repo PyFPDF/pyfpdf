@@ -1052,6 +1052,9 @@ class OutputProducer:
     def _insert_resources(self, page_objs):
         img_objs_per_index = self._add_images()
         gfxstate_objs_per_name = self._add_gfxstates()
+        font_objs_per_index = self._add_fonts(
+            img_objs_per_index, gfxstate_objs_per_name
+        )
         shading_objs_per_name = self._add_shadings()
         pattern_objs_per_name = self._add_patterns()
         # Insert /Resources dicts:
