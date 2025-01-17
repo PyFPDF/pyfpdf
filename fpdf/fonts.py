@@ -35,6 +35,7 @@ from .deprecation import get_stack_level
 from .drawing import convert_to_device_color, DeviceGray, DeviceRGB
 from .enums import FontDescriptorFlags, TextEmphasis, Align
 from .syntax import Name, PDFObject
+from .font_type_3 import get_color_font_object
 from .util import escape_parens
 
 
@@ -238,7 +239,7 @@ class TTFFont:
         "name",
         "desc",
         "glyph_ids",
-        "hbfont",
+        "_hbfont",
         "sp",
         "ss",
         "up",
@@ -252,12 +253,14 @@ class TTFFont:
         "cmap",
         "ttfont",
         "missing_glyphs",
+        "color_font",
     )
 
     def __init__(self, fpdf, font_file_path, fontkey, style):
         self.i = len(fpdf.fonts) + 1
         self.type = "TTF"
         self.ttffile = font_file_path
+        self._hbfont = None
         self.fontkey = fontkey
 
         # recalcTimestamp=False means that it doesn't modify the "modified" timestamp in head table
@@ -344,13 +347,21 @@ class TTFFont:
         self.ss = round(os2_table.yStrikeoutSize * self.scale)
         self.emphasis = TextEmphasis.coerce(style)
         self.subset = SubsetMap(self, [ord(char) for char in sbarr])
+        self.color_font = get_color_font_object(fpdf, self)
+
+    # pylint: disable=no-member
+    @property
+    def hbfont(self):
+        if not self._hbfont:
+            self._hbfont = HarfBuzzFont(hb.Face(hb.Blob.from_file_path(self.ttffile)))
+        return self._hbfont
 
     def __repr__(self):
         return f"TTFFont(i={self.i}, fontkey={self.fontkey})"
 
     def close(self):
         self.ttfont.close()
-        self.hbfont = None
+        self._hbfont = None
 
     def get_text_width(self, text, font_size_pt, text_shaping_parms):
         if text_shaping_parms:
@@ -384,8 +395,6 @@ class TTFFont:
         """
         This method invokes Harfbuzz to perform text shaping of the input string
         """
-        if not hasattr(self, "hbfont"):
-            self.hbfont = HarfBuzzFont(hb.Face(hb.Blob.from_file_path(self.ttffile)))
         self.hbfont.ptem = font_size_pt
         buf = hb.Buffer()
         buf.cluster_level = 1
